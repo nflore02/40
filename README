@@ -1,0 +1,109 @@
+README for Homework 6 - UM
+By Nick Flores & Daniel Rodrigues
+
+We have received help from the following:
+        Chase
+        Jacob
+
+Everything has been correctly implemented.
+
+Departures:
+        In our design we initially planned to complete the assignment
+        in 3 distinct modules, but found we really only needed 2.
+        One for our UM main (um.c) and one for memory segmentation
+        (segments.c). Our third was going to be a module for the UM's
+        I/O but we realized that wasn't necessary after understanding
+        the assignment layout a bit more.
+        We also planned to use Hanson Sets but ended up only using
+        Sequences.
+
+Architecure:
+
+        [ UM ]
+           |
+           |
+      [ Segments ]
+
+        The architecture of our system (rougly shown in the digram above)
+        consists of the UM (main) and the Segments (memory) modules. Segments
+        is seen here as a child of the UM module.
+
+Modules:
+
+        um.c:
+          -This is our main module which houses most of the UM's heavy
+           lifting.
+          -It reads in the binary file of instructions,
+           loads the program, and executes the instruction cycle.
+          -It also contains the implementation for each instruction
+           opcode as well as the array of registers that is used to
+           execute the relative instructions.
+          -This module also creates an instance of our memory struct
+           that is used across all functions/modules.
+          -um.c's main secret is its array of registers, which are only
+           modified in this module but whose values are passed to segments.
+          -um.c is segments.c's parent, so only it has knowledge of the
+           latter.
+
+        segments.c:
+          -This is our main memory module, which houses functions to
+           manipulate and touch the segments in memory.
+          -This module is used in order to load, store, map, unmap,
+           and replace segments of memory.
+          -segments.c makes excellent use of Hanson's Sequences'
+           to represent the segments in memory, which are sequences
+           of sequences.
+          -The secret of segments.c is hiding how our UM deals with
+           the segmented memory.
+          -This is the child module of um.c.
+
+Execution Time:
+        
+        We ran midmark.um in approximately 4 seconds, which
+        executes 8.5 million instructions, so basic arithmatic
+        tells us that a 50 million instruction program would
+        take about 24 seconds.
+
+UM Unit Tests:
+
+        print-H.um:
+                This test takes in an input and outputs that value
+                immediately. It then loads 2 values into 2 separate
+                registers, calculates the sum, and outputs the result,
+                which should be 72 (or the character 'H').
+
+       load_prgm:
+                This test loads values into registers and then tests
+                the load progam function. If load program is nonfunctional
+                the test will halt without outputting anything, otherwise
+                it will output the character 'H'.
+
+       conditional.um:
+                This test loads values into registers and then tests the
+                conditional move function. If functional it will outpu
+                'H', otherwise it will output nothing (or the NULL char).
+
+       load_seg.um:
+                This tests store and load for functionality. It maps
+                a new segment, stores a value in that segment, retrieves
+                that valut and outputs it. A correct UM will output 'H'
+                otherwise nothing.
+
+       arith_test.um:
+                This tests our arithmatic functions (add, mulitply,
+                divide, and nand).
+
+       map.um:
+                This tests verbose mapping by loading values, maps
+                5 new segments, stores and loads from those segments,
+                then unmaps them and repeats after unmapping. This is
+                to make sure no new segments are created and our UM
+                reuses umapped segments. A correct UM will produce 
+                2 'H' characters for this test.
+
+Hours:
+        Analyzing: 3 hours
+
+        Designing: 5 hours
+
+        Solving: 15+ hours

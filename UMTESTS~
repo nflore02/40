@@ -1,0 +1,6 @@
+load_seg.um
+load_prgm.um
+print-H.um
+arith.um
+map.um
+conditional.um\

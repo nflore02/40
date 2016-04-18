@@ -1,0 +1,87 @@
+Nick Flores and Daniel Rodrigues
+COMP 40
+Homework 6 Design
+
+What are the major components of your program, and what are their interfaces?
+Components include functions as well as abstract data types. An interface
+includes contracts as well as function prototypes.
+  -segments.c/.h
+        This module will have a set that will use segment ID’s as keys and
+        sequences as values. The sequences will represent segments.
+        It will also contain a sequence that will hold the unmapped segment
+        ID’s. This file will be able to load memory from existing segments, and
+        store memory in new segments or add into existing segments.
+        The map function will check whether there are any segments that have
+        been unmapped that can be reused. Only after this check would it create
+        a new segment (sequence).
+        The segment ID and sequence would be stored in the set.
+        The unmap function would take a segment ID and place it in the unmapped
+        sequence to be reused. 
+  -um.c/.h 
+        This module will need to initialize the state of the machine (set
+        registers to empty and create segment 0 containing the program.
+        After initializing the state, it will call umio.c to read in words from
+        a file. The um.c file will also call umio.c as needed to write output.
+        The 8 registers will be represented as a hanson array of uint32_t words.
+        The segments will be represented using hanson sequences and the segment
+        ID’s will map to the sequences in a set. 
+  -umio.c/.h
+        This module will open a file and read in a series of words that will be
+        sent back to um.c to be stored in segments.
+        This file will be passed in a register to store a single word from the
+        file, which will be sent back to um.c.
+        When umio.c has reached the end of the file, and there are no more words
+        left umio.c fills the register with 1 bits and sends it back to um.c 
+
+ How do the components in your program interact? That is, what is the
+ architecture of your program? 
+                [Main]
+                   |
+                 [UM]
+                   |
+                 /   \
+        [Segments]  [UMIO]
+
+   -Main passes file pointer to UM, which calls run()
+   -UM is the main machine cycle implementer
+   -UM works with UMIO and Segments to process instructions one line at a time.
+   -UMIO and Segments work in tandem but only refer to UM and not to each other.
+
+
+  What test cases will you use to convince yourself that your program works? 
+    -Test Cases for um:
+        We will write test mains that will attempt conditional moves, addition,
+        multiplication, division, Nand, and print out the results or fail if
+        there is a runtime error.
+        Halt, and load program will be tested with simple test mains that
+        attempt those commands. 
+    -Test Cases for umio:
+        We can test whether or not umio is reading the correct input by having
+        it print out the 32 bit words and comparing them to the inputted file
+        and identifying differences, if any.
+        Output is simpler to test because it will print out the results of the
+        commands and 
+    -Test Cases for segments:
+        map, unmap, segmented load, segmented store, load value
+
+  Segments checklist:
+    -What data are in the problem? 
+        The data will be 32 bit words that will be stored in “segments” of
+        memory. The segments will be identified with segment ID’s that will be
+        32 bit integers.
+
+    -What representation will you use, and what invariants will it satisfy?
+     (This question is especially important to answer precisely.) 
+        To represent the actual segments of memory we will use sequences which
+        store a series of 32 bit integer words. The segment ID’s will map to
+        sequences using a set which will use the ID’s as keys, and pointers to
+        sequences as values. We will store the unmapped ID’s in a sequence so
+        that we can reuse them instead of creating new segments. 
+
+    -What test cases have you devised? 
+        See attached code.
+
+    -What programming idioms will you need?
+        Reading one line at a time from input file.
+        Usage of Hanson Sequences and Sets
+
